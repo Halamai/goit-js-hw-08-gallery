@@ -71,6 +71,7 @@ const refs = {
     `button[data-action="close-lightbox"]`
   ),
   clienBigimageBtn: document.querySelector(".lightbox__image"),
+  closeBigimageBtnoverlay: document.querySelector(".lightbox__overlay"),
 };
 
 // console.log(refs.galleryList);
@@ -116,4 +117,10 @@ refs.closeBigimageBtn.addEventListener("click", closeimage);
 function closeimage(e) {
   refs.openBigimageBtn.classList.add("is-open");
   refs.openBigimageBtn.classList.remove("is-open");
+  refs.clienBigimageBtn.src = "";
+}
+refs.closeBigimageBtnoverlay.document.addEventListener("click", overlay);
+function overlay(e) {
+  refs.openBigimageBtn.classList.remove("is-open");
+  console.log(overlay);
 }
