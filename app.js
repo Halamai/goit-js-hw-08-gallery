@@ -73,20 +73,16 @@ const refs = {
   clienBigimageBtn: document.querySelector(".lightbox__image"),
   closeBigimageBtnoverlay: document.querySelector(".lightbox__overlay"),
 };
-
-// console.log(refs.galleryList);
+const galleryItemsLength = galleryItems.length - 1;
 
 const makeGallerysList = (galleryItems) => {
-  return galleryItems.map(({ preview, original, description }) => {
-    // console.log(preview);
-    // console.log(original);
-    // console.log(description);
+  return galleryItems.map(({ preview, original, description }, index) => {
     return `<li class="gallery__item">
   <a
     class="gallery__link"
     href='${original}'
   >
-    <img
+    <img data-index='${index}'
       class="gallery__image"
       src='${preview}'
       data-source='${original}'
@@ -101,26 +97,49 @@ refs.galleryList.insertAdjacentHTML(
   makeGallerysList(galleryItems).join("")
 );
 
-refs.galleryList.addEventListener("click", galleryItemsClick);
+let activeImage = 0;
+
+function slider(e) {
+  if (e.code === "ArrowRight") {
+    activeImage += 1;
+    if (activeImage > galleryItemsLength) {
+      activeImage = 0;
+    }
+  } else if (e.code === "ArrowLeft") {
+    activeImage -= 1;
+    if (activeImage < 0) {
+      activeImage = galleryItemsLength;
+    }
+  }
+  refs.clienBigimageBtn.src = galleryItems[activeImage].original;
+}
 
 function galleryItemsClick(e) {
   e.preventDefault();
   if (!e.target.classList.contains("gallery__image")) {
     return;
   }
-  // console.log(e);
-  // console.log(e.target);
+  activeImage = +e.target.dataset.index;
+
   refs.openBigimageBtn.classList.add("is-open");
+
   refs.clienBigimageBtn.src = e.target.dataset.source;
 }
+
 refs.closeBigimageBtn.addEventListener("click", closeimage);
 function closeimage(e) {
   refs.openBigimageBtn.classList.add("is-open");
   refs.openBigimageBtn.classList.remove("is-open");
   refs.clienBigimageBtn.src = "";
 }
-refs.closeBigimageBtnoverlay.document.addEventListener("click", overlay);
-function overlay(e) {
-  refs.openBigimageBtn.classList.remove("is-open");
-  console.log(overlay);
+
+function closesEsc(e) {
+  if (e.code === "Escape") {
+    closeimage();
+  }
 }
+
+refs.galleryList.addEventListener("click", galleryItemsClick);
+refs.closeBigimageBtnoverlay.addEventListener("click", closeimage);
+window.addEventListener("keyup", closesEsc);
+window.addEventListener("keyup", slider);
